@@ -1,0 +1,137 @@
+# ============================================================
+# SECURITY — NEVER COMMIT THESE
+# ============================================================
+
+# SSH private keys and PEM files
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# AWS credentials
+.aws/
+aws-credentials*
+credentials
+config
+
+# Cluster config files (contain IPs, instance IDs)
+cluster-config.txt
+cluster-ips.txt
+ssh_to_master_node.sh
+spark-cluster-key*
+
+# Environment files
+.env
+.env.*
+
+# ============================================================
+# PYTHON
+# ============================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# uv
+uv.lock
+# (actually, commit uv.lock for reproducibility — comment the line above if you want)
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# ============================================================
+# SPARK
+# ============================================================
+
+# Spark work directories and logs
+spark-warehouse/
+metastore_db/
+derby.log
+*.log
+logs/
+work/
+
+# Spark temp
+.spark/
+
+# ============================================================
+# DATA — NEVER COMMIT RAW DATA
+# ============================================================
+
+# Raw Reddit data (hundreds of GB — goes in S3, not git)
+data/raw/
+data/processed/
+*.parquet
+*.tsv
+*.zst
+*.gz
+*.tar
+
+# Large CSVs (small aggregates in results/ are fine)
+results/**/*.csv
+!results/**/agg_*.csv
+!results/**/summary_*.csv
+
+# Models
+models/
+*.pkl
+*.joblib
+*.bin
+
+# ============================================================
+# IDE / OS
+# ============================================================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# MISC
+# ============================================================
+
+# Backup files we create when patching scripts
+*.orig
+*.bak
+
+# Temp scratch
+/tmp/
+scratch/

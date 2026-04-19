@@ -101,10 +101,6 @@ data/processed/
 *.gz
 *.tar
 
-# Large CSVs (small aggregates in results/ are fine)
-results/**/*.csv
-!results/**/agg_*.csv
-!results/**/summary_*.csv
 
 # Models
 models/

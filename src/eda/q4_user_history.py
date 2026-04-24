@@ -39,7 +39,7 @@ def main():
     print("EDA Q4: User Posting History vs Virality")
     print("=" * 60)
 
-    path = S3_SUBMISSIONS + DEFAULT_DEV_MONTH
+    path = S3_SUBMISSIONS  # full dataset
     print(f"Reading: {path}")
     df = spark.read.parquet(path)
 
@@ -106,7 +106,7 @@ def main():
 
     (by_bucket.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q4_by_activity_bucket"))
+        .csv(f"{S3_RESULTS}/q4_by_activity_bucket_full"))
 
     # ------------------------------------------------------------------
     # (c) Top 20 most active authors
@@ -131,7 +131,7 @@ def main():
 
     (top_authors.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q4_top_authors"))
+        .csv(f"{S3_RESULTS}/q4_top_authors_full"))
 
     print("\n" + "=" * 60)
     print("SUMMARY")

@@ -38,7 +38,7 @@ def main():
     print("EDA Q3: Engagement Distribution")
     print("=" * 60)
 
-    path = S3_SUBMISSIONS + DEFAULT_DEV_MONTH
+    path = S3_SUBMISSIONS  # full dataset
     print(f"Reading: {path}")
     df = spark.read.parquet(path)
 
@@ -119,7 +119,7 @@ def main():
 
     (score_dist.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q3_score_distribution"))
+        .csv(f"{S3_RESULTS}/q3_score_distribution_full"))
 
     # ------------------------------------------------------------------
     # (c) Power law check: what % of posts generate X% of total score?
@@ -147,7 +147,7 @@ def main():
     )
     (power_law_df.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q3_power_law"))
+        .csv(f"{S3_RESULTS}/q3_power_law_full"))
 
     print("\n" + "=" * 60)
     print("SUMMARY")

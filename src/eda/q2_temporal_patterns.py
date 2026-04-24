@@ -36,7 +36,7 @@ def main():
     print("EDA Q2: Temporal Patterns of Viral Posts")
     print("=" * 60)
 
-    path = S3_SUBMISSIONS + DEFAULT_DEV_MONTH
+    path = S3_SUBMISSIONS  # full dataset
     print(f"Reading: {path}")
     df = spark.read.parquet(path)
 
@@ -78,7 +78,7 @@ def main():
     by_hour.show(24, truncate=False)
     (by_hour.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q2_by_hour"))
+        .csv(f"{S3_RESULTS}/q2_by_hour_full"))
 
     # (b) By day of week
     print("\n--- By Day of Week ---")
@@ -105,7 +105,7 @@ def main():
     by_day.show(7, truncate=False)
     (by_day.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q2_by_dayofweek"))
+        .csv(f"{S3_RESULTS}/q2_by_dayofweek_full"))
 
     print("\n" + "=" * 60)
     print("SUMMARY")

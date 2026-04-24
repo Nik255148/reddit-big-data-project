@@ -46,7 +46,7 @@ def main():
     print("EDA Q1: Virality Rates by Subreddit")
     print("=" * 60)
 
-    path = S3_SUBMISSIONS + DEFAULT_DEV_MONTH
+    path = S3_SUBMISSIONS
     print(f"Reading: {path}")
     df = spark.read.parquet(path)
 
@@ -104,7 +104,7 @@ def main():
     (abs_by_sub.limit(200)
         .coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv("s3a://nik-datsbd-s2026/results/q1_virality_absolute"))
+        .csv("s3a://nik-datsbd-s2026/results/q1_virality_absolute_full"))
 
     # ------------------------------------------------------------------
     # (b) RELATIVE virality rate per subreddit
@@ -150,7 +150,7 @@ def main():
     (rel_by_sub.limit(200)
         .coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv("s3a://nik-datsbd-s2026/results/q1_virality_relative"))
+        .csv("s3a://nik-datsbd-s2026/results/q1_virality_relative_full"))
 
     # ------------------------------------------------------------------
     # Summary

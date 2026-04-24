@@ -33,11 +33,21 @@ ssh -i "$HOME/dats6450/term-project/spark-cluster-setup/$KEY_FILE" \
     "ubuntu@$MASTER_PUBLIC_IP" \
     "mkdir -p ~/project/src ~/project/results"
 
+ssh -i "$HOME/dats6450/term-project/spark-cluster-setup/$KEY_FILE" \
+    -o StrictHostKeyChecking=no \
+    "ubuntu@$MASTER_PUBLIC_IP" \
+    "mkdir -p ~/project/src ~/project/results ~/project/scripts"
+
 # Copy the whole src/ tree, preserving structure
 scp -i "$HOME/dats6450/term-project/spark-cluster-setup/$KEY_FILE" \
     -o StrictHostKeyChecking=no \
     -r "$REPO_ROOT/src/." \
     "ubuntu@$MASTER_PUBLIC_IP:~/project/src/"
+
+scp -i "$HOME/dats6450/term-project/spark-cluster-setup/$KEY_FILE" \
+    -o StrictHostKeyChecking=no \
+    -r "$REPO_ROOT/scripts/." \
+    "ubuntu@$MASTER_PUBLIC_IP:~/project/scripts/"
 
 echo "Sync complete."
 echo ""

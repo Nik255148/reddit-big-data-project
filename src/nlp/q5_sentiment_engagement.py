@@ -39,7 +39,7 @@ from common import build_spark, S3_SUBMISSIONS, DEFAULT_DEV_MONTH
 S3_RESULTS = "s3a://nik-datsbd-s2026/results"
 ABS_SCORE_THRESHOLD = 1000
 ABS_COMMENTS_THRESHOLD = 100
-DEV_SAMPLE_LIMIT = 200_000
+DEV_SAMPLE_LIMIT = 1_000_000
 
 
 def main():
@@ -50,7 +50,7 @@ def main():
     print("NLP Q5: Sentiment vs Engagement")
     print("=" * 60)
 
-    path = S3_SUBMISSIONS + DEFAULT_DEV_MONTH
+    path = S3_SUBMISSIONS  # full dataset
     print(f"Reading: {path}")
     df = spark.read.parquet(path)
 
@@ -142,7 +142,7 @@ def main():
 
     (by_sentiment.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q5_sentiment_engagement"))
+        .csv(f"{S3_RESULTS}/q5_sentiment_engagement_full"))
 
     # ------------------------------------------------------------------
     # Bonus: top subreddits by sentiment mix
@@ -158,7 +158,7 @@ def main():
 
     (by_sub_sentiment.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q5_sentiment_by_subreddit"))
+        .csv(f"{S3_RESULTS}/q5_sentiment_by_subreddit_full"))
 
     print("\n" + "=" * 60)
     print("SUMMARY")

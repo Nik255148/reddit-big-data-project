@@ -65,7 +65,7 @@ def main():
     print("NLP Q6: TF-IDF Vocabulary of Viral vs Average Posts")
     print("=" * 60)
 
-    path = S3_SUBMISSIONS + DEFAULT_DEV_MONTH
+    path = S3_SUBMISSIONS  # full dataset
     print(f"Reading: {path}")
     df = spark.read.parquet(path)
 
@@ -140,7 +140,7 @@ def main():
     combined = viral_words_df.union(avg_words_df)
     (combined.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q6_viral_vocabulary"))
+        .csv(f"{S3_RESULTS}/q6_viral_vocabulary_full"))
 
     print("\n" + "=" * 60)
     print("SUMMARY")

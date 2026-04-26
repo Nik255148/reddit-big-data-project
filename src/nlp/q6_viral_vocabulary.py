@@ -45,7 +45,7 @@ def get_top_tfidf_words(df, vocab, top_n=50):
     from pyspark.ml.linalg import SparseVector
     import numpy as np
 
-    tfidf_rows = df.select("tfidf_features").collect()
+    tfidf_rows = df.select("tfidf_features").limit(10000).collect()
     word_scores = {}
     for row in tfidf_rows:
         vec = row["tfidf_features"]

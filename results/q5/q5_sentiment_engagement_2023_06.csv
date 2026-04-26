@@ -1,0 +1,5 @@
+sentiment_label,post_count,avg_score,avg_comments,viral_posts,viral_rate_pct
+,60,9.82,2.08,0,0.0
+na,21780,34.03,5.72,242,1.111
+negative,91377,50.74,7.67,1366,1.495
+positive,86783,42.76,6.66,1071,1.234

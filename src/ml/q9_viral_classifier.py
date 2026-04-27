@@ -141,7 +141,7 @@ def main():
     print("\n--- Random Forest Classifier ---")
     rf_pipe = Pipeline(stages=[
         indexer, assembler,
-        RandomForestClassifier(
+        RandomForestClassifier(maxBins=600000, 
             featuresCol="features", labelCol="label",
             numTrees=50, maxDepth=6, seed=42
         )

@@ -134,7 +134,7 @@ def main():
         indexer, assembler,
         RandomForestRegressor(
             featuresCol="features", labelCol="label",
-            numTrees=50, maxDepth=6, seed=42
+            numTrees=50, maxDepth=6, maxBins=600000, seed=42
         )
     ])
     rf_model = rf_pipeline.fit(train)
@@ -150,7 +150,7 @@ def main():
         indexer, assembler,
         GBTRegressor(
             featuresCol="features", labelCol="label",
-            maxIter=30, maxDepth=5, seed=42
+            maxIter=30, maxDepth=5, maxBins=600000, seed=42
         )
     ])
     gbt_model = gbt_pipeline.fit(train)

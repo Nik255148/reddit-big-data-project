@@ -88,7 +88,7 @@ def main():
     assembler = VectorAssembler(
         inputCols=["score_d", "hour_utc", "dayofweek",
                    "title_length", "body_length", "is_self",
-                   "over_18", "subreddit_idx"],
+                   "over_18"],
         outputCol="features"
     )
 
@@ -134,7 +134,7 @@ def main():
         indexer, assembler,
         RandomForestRegressor(
             featuresCol="features", labelCol="label",
-            numTrees=50, maxDepth=6, maxBins=600000, seed=42
+            numTrees=50, maxDepth=6, seed=42
         )
     ])
     rf_model = rf_pipeline.fit(train)
@@ -150,7 +150,7 @@ def main():
         indexer, assembler,
         GBTRegressor(
             featuresCol="features", labelCol="label",
-            maxIter=30, maxDepth=5, maxBins=600000, seed=42
+            maxIter=30, maxDepth=5, seed=42
         )
     ])
     gbt_model = gbt_pipeline.fit(train)
@@ -176,7 +176,7 @@ def main():
     rf_stage = rf_model.stages[-1]
     feature_names = ["score", "hour_utc", "dayofweek",
                      "title_length", "body_length",
-                     "is_self", "over_18", "subreddit_idx"]
+                     "is_self", "over_18"]
     importances = list(zip(feature_names,
                            rf_stage.featureImportances.toArray()))
     importances.sort(key=lambda x: -x[1])

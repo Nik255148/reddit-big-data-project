@@ -1,0 +1,4 @@
+model,rmse,r2
+LinearRegression,52.7371,0.1968
+RandomForest,54.7729,0.1336
+GBT,54.5778,0.1398

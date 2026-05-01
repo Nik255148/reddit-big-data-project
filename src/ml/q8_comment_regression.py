@@ -47,7 +47,7 @@ def main():
     print("ML Q8: Predict Number of Comments (Regression)")
     print("=" * 60)
 
-    path = S3_SUBMISSIONS + DEFAULT_DEV_MONTH
+    path = S3_SUBMISSIONS  # full dataset
     print(f"Reading: {path}")
     df = spark.read.parquet(path)
 
@@ -76,6 +76,8 @@ def main():
         .select("label", "score_d", "hour_utc", "dayofweek",
                 "title_length", "body_length", "is_self",
                 "over_18", "subreddit")
+        .sample(fraction=0.02, seed=42)  # ~10M sample for ML
+        .sample(fraction=0.02, seed=42)  # ~10M sample for ML
         .na.fill(0.0)
     )
 
@@ -169,7 +171,7 @@ def main():
 
     (results_df.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q8_regression_results"))
+        .csv(f"{S3_RESULTS}/q8_regression_results_full"))
 
     # Feature importance from RF
     print("\n--- Feature Importance (Random Forest) ---")
@@ -189,7 +191,7 @@ def main():
     )
     (importance_df.coalesce(1)
         .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q8_feature_importance"))
+        .csv(f"{S3_RESULTS}/q8_feature_importance_full"))
 
     print(f"\nResults: {S3_RESULTS}/q8_regression_results/")
     spark.stop()

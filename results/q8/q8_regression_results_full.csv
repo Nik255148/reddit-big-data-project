@@ -1,0 +1,4 @@
+model,rmse,r2,train_size,test_size
+LinearRegression,32.4198,0.0087,167923,41810
+RandomForest,30.7281,0.1095,167923,41810
+GBT,32.0215,0.0329,167923,41810

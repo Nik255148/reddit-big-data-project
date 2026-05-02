@@ -1,5 +1,3 @@
-Question-9:
-
 """
 src/ml/q9_viral_classifier.py
 
@@ -77,6 +75,7 @@ def main():
                     .cast("double"))
         .select("label", "hour_utc", "dayofweek", "title_length",
                 "body_length", "is_self", "over_18", "subreddit")
+        .sample(fraction=0.02, seed=42)  # ~10M sample
         .na.fill(0.0)
     )
 
@@ -126,7 +125,7 @@ def main():
         indexer, assembler, scaler,
         LogisticRegression(
             featuresCol="scaled_features", labelCol="label",
-            weightCol="classWeight", maxIter=20, regParam=0.01
+            weightCol="classWeight", maxIter=10, regParam=0.01
         )
     ])
     lr_model = lr_pipe.fit(train)
@@ -160,9 +159,10 @@ def main():
     print("\n--- Model Comparison ---")
     results_df.show(truncate=False)
 
-    (results_df.coalesce(1)
-        .write.mode("overwrite").option("header", True)
-        .csv(f"{S3_RESULTS}/q9_viral_classifier_results"))
+    results_df.toPandas().to_csv(f"/tmp/q9_results.csv", index=False)
+    import subprocess
+    subprocess.run(["aws", "s3", "cp", "/tmp/q9_results.csv",
+                    f"{S3_RESULTS}/q9_viral_classifier_results.csv"])
 
     print(f"\nResults: {S3_RESULTS}/q9_viral_classifier_results/")
     spark.stop()

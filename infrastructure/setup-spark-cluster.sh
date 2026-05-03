@@ -143,7 +143,7 @@ aws ec2 authorize-security-group-ingress \
   --group-id $SPARK_SG_ID \
   --protocol -1 \
   --source-group $SPARK_SG_ID \
-  --region $AWS_REGION > /dev/null
+  --region $AWS_REGION > /dev/null || true
 log_success "Intra-cluster communication enabled"
 
 # Allow SSH from EC2 instance
@@ -153,7 +153,7 @@ aws ec2 authorize-security-group-ingress \
   --protocol tcp \
   --port 22 \
   --cidr ${MY_EC2_IP}/32 \
-  --region $AWS_REGION > /dev/null
+  --region $AWS_REGION > /dev/null || true
 log_success "SSH access from EC2 enabled"
 
 # Allow SSH from laptop
@@ -163,7 +163,7 @@ aws ec2 authorize-security-group-ingress \
   --protocol tcp \
   --port 22 \
   --cidr ${MY_LAPTOP_IP}/32 \
-  --region $AWS_REGION > /dev/null
+  --region $AWS_REGION > /dev/null || true
 log_success "SSH access from laptop enabled"
 
 # Allow Spark Web UI from EC2
@@ -173,7 +173,7 @@ aws ec2 authorize-security-group-ingress \
   --protocol tcp \
   --port 8080-8081 \
   --cidr ${MY_EC2_IP}/32 \
-  --region $AWS_REGION > /dev/null
+  --region $AWS_REGION > /dev/null || true
 log_success "Spark Web UI access from EC2 enabled"
 
 # Allow Spark Web UI from laptop
@@ -183,7 +183,7 @@ aws ec2 authorize-security-group-ingress \
   --protocol tcp \
   --port 8080-8081 \
   --cidr ${MY_LAPTOP_IP}/32 \
-  --region $AWS_REGION > /dev/null
+  --region $AWS_REGION > /dev/null || true
 log_success "Spark Web UI access from laptop enabled"
 
 # Allow Spark Application UI from EC2
@@ -193,7 +193,7 @@ aws ec2 authorize-security-group-ingress \
   --protocol tcp \
   --port 4040 \
   --cidr ${MY_EC2_IP}/32 \
-  --region $AWS_REGION > /dev/null
+  --region $AWS_REGION > /dev/null || true
 log_success "Spark Application UI from EC2 enabled"
 
 # Allow Spark Application UI from laptop
@@ -203,7 +203,7 @@ aws ec2 authorize-security-group-ingress \
   --protocol tcp \
   --port 4040 \
   --cidr ${MY_LAPTOP_IP}/32 \
-  --region $AWS_REGION > /dev/null
+  --region $AWS_REGION > /dev/null || true
 log_success "Spark Application UI from laptop enabled"
 
 ################################################################################

@@ -14,7 +14,7 @@ from pyspark.sql import SparkSession
 
 
 # S3 paths — single source of truth for dataset locations
-S3_BUCKET = "s3a://nik-datsbd-s2026"
+S3_BUCKET = "s3a://aditya-s3-bd"
 S3_SUBMISSIONS = f"{S3_BUCKET}/reddit-data/parquet/submissions/"
 S3_COMMENTS = f"{S3_BUCKET}/reddit-data/parquet/comments/"
 

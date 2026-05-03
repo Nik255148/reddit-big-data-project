@@ -19,8 +19,8 @@ Approach:
      - avg score, avg num_comments
      - distribution across subreddits
 
-Input : 1 month of COMMENTS (DEFAULT_DEV_MONTH), limited for dev run.
-Output: CSVs written to S3 results path.
+Input : First 15 days of DEFAULT_DEV_MONTH (2023-06-01 to 2023-06-15).
+Output: CSVs written to local path on master node.
 
 Run from master:
     spark-submit \
@@ -41,10 +41,16 @@ from sparknlp.base import DocumentAssembler, Pipeline
 from sparknlp.annotator import Tokenizer, Normalizer, ViveknSentimentModel
 from common import build_spark, S3_COMMENTS, S3_SUBMISSIONS, DEFAULT_DEV_MONTH
 
-S3_RESULTS = "s3a://nik-datsbd-s2026/results"
+# Write results locally on master (S3 write to nik-datsbd-s2026 returns 403
+# under the current AWS Academy account)
+S3_RESULTS = "file:///home/ubuntu/project/results/q7"
+
 MIN_COMMENTS_PER_POST = 5
 CONTROVERSY_THRESHOLD = 0.25
-DEV_COMMENT_LIMIT = 500_000
+
+# 15-day window: first half of June 2023
+START_DATE = "2023-06-01"
+END_DATE = "2023-06-15"
 
 
 def main():
@@ -53,23 +59,26 @@ def main():
 
     print("=" * 60)
     print("NLP Q7: Controversy Signal via Sentiment Variance")
+    print(f"Date range: {START_DATE} to {END_DATE}")
     print("=" * 60)
 
-    # Load comments
+    # Load comments (filter to 15-day window)
     comments_path = S3_COMMENTS + DEFAULT_DEV_MONTH
     print(f"Reading comments: {comments_path}")
     comments = (
         spark.read.parquet(comments_path)
+        .where(F.from_unixtime(F.col("created_utc")).cast("date")
+               .between(START_DATE, END_DATE))
         .where(F.col("body") != "[deleted]")
         .where(F.col("body") != "[removed]")
         .where(F.col("author") != "[deleted]")
         .where(F.col("body").isNotNull())
         .where(F.length(F.col("body")) > 10)
-        .select("id", "link_id", "body", "score")
-        .limit(DEV_COMMENT_LIMIT)
+        .select("id", "link_id", "body", "score", "created_utc")
     )
 
-    print(f"Sample: {DEV_COMMENT_LIMIT:,} comments")
+    sample_count = comments.count()
+    print(f"Comments in window {START_DATE} to {END_DATE}: {sample_count:,}")
 
     # ------------------------------------------------------------------
     # Spark NLP sentiment pipeline on comment bodies
@@ -97,7 +106,7 @@ def main():
     )
 
     pipeline = Pipeline(stages=[document_assembler, tokenizer,
-                                 normalizer, vivekn])
+                                normalizer, vivekn])
 
     print("\nRunning sentiment pipeline on comments...")
     model = pipeline.fit(comments)
@@ -138,22 +147,25 @@ def main():
     total_posts = post_sentiment.count()
     print(f"\nPosts with >= {MIN_COMMENTS_PER_POST} comments: {total_posts:,}")
     print(f"Controversial posts (variance >= {CONTROVERSY_THRESHOLD}): "
-          f"{controversial_count:,} ({controversial_count/total_posts*100:.1f}%)")
+          f"{controversial_count:,} "
+          f"({controversial_count/total_posts*100:.1f}%)")
 
     # ------------------------------------------------------------------
-    # Join with submissions to get post metadata
+    # Join with submissions (also filtered to same 15-day window)
     # ------------------------------------------------------------------
     print("\n--- Joining with submissions ---")
     subs_path = S3_SUBMISSIONS + DEFAULT_DEV_MONTH
     submissions = (
         spark.read.parquet(subs_path)
+        .where(F.from_unixtime(F.col("created_utc")).cast("date")
+               .between(START_DATE, END_DATE))
         .select("id", "title", "score", "num_comments",
                 "subreddit", "author")
     )
 
     joined = post_sentiment.join(submissions,
-                                  post_sentiment.post_id == submissions.id,
-                                  how="inner")
+                                 post_sentiment.post_id == submissions.id,
+                                 how="inner")
 
     # ------------------------------------------------------------------
     # Compare controversial vs consensus posts
@@ -204,7 +216,8 @@ def main():
     print("\n" + "=" * 60)
     print("SUMMARY")
     print("=" * 60)
-    print(f"Comments analyzed: {DEV_COMMENT_LIMIT:,}")
+    print(f"Date range: {START_DATE} to {END_DATE}")
+    print(f"Comments analyzed: {sample_count:,}")
     print(f"Posts with enough comments: {total_posts:,}")
     print(f"Controversial posts: {controversial_count:,}")
     print(f"Results: {S3_RESULTS}/q7_controversy_comparison/")

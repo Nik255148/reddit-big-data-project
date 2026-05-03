@@ -1,3 +1,5 @@
+Question-7:
+
 """
 src/nlp/q7_controversy_signal.py
 
@@ -19,7 +21,7 @@ Approach:
      - avg score, avg num_comments
      - distribution across subreddits
 
-Input : 1 FULL month of COMMENTS (DEFAULT_DEV_MONTH).
+Input : 1 month of COMMENTS (DEFAULT_DEV_MONTH), limited for dev run.
 Output: CSVs written to S3 results path.
 
 Run from master:
@@ -41,9 +43,10 @@ from sparknlp.base import DocumentAssembler, Pipeline
 from sparknlp.annotator import Tokenizer, Normalizer, ViveknSentimentModel
 from common import build_spark, S3_COMMENTS, S3_SUBMISSIONS, DEFAULT_DEV_MONTH
 
-S3_RESULTS = "s3a://aditya-s3-bd/results"
+S3_RESULTS = "s3a://nik-datsbd-s2026/results"
 MIN_COMMENTS_PER_POST = 5
 CONTROVERSY_THRESHOLD = 0.25
+DEV_COMMENT_LIMIT = 500_000
 
 
 def main():
@@ -52,10 +55,9 @@ def main():
 
     print("=" * 60)
     print("NLP Q7: Controversy Signal via Sentiment Variance")
-    print(f"Running on FULL month: {DEFAULT_DEV_MONTH}")
     print("=" * 60)
 
-    # Load comments (full month, no limit)
+    # Load comments
     comments_path = S3_COMMENTS + DEFAULT_DEV_MONTH
     print(f"Reading comments: {comments_path}")
     comments = (
@@ -66,10 +68,10 @@ def main():
         .where(F.col("body").isNotNull())
         .where(F.length(F.col("body")) > 10)
         .select("id", "link_id", "body", "score")
+        .limit(DEV_COMMENT_LIMIT)
     )
 
-    total_comments = comments.count()
-    print(f"Total comments to process: {total_comments:,}")
+    print(f"Sample: {DEV_COMMENT_LIMIT:,} comments")
 
     # ------------------------------------------------------------------
     # Spark NLP sentiment pipeline on comment bodies
@@ -204,7 +206,7 @@ def main():
     print("\n" + "=" * 60)
     print("SUMMARY")
     print("=" * 60)
-    print(f"Comments analyzed: {total_comments:,}")
+    print(f"Comments analyzed: {DEV_COMMENT_LIMIT:,}")
     print(f"Posts with enough comments: {total_posts:,}")
     print(f"Controversial posts: {controversial_count:,}")
     print(f"Results: {S3_RESULTS}/q7_controversy_comparison/")

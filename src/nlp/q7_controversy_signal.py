@@ -1,5 +1,3 @@
-Question-7:
-
 """
 src/nlp/q7_controversy_signal.py
 
